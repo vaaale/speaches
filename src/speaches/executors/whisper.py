@@ -77,17 +77,18 @@ class WhisperModelRegistry(ModelRegistry[Model, WhisperModelFiles]):
     def list_local_models(self) -> Generator[Model]:
         cached_model_repos_info = get_cached_model_repos_info()
         for cached_repo_info in cached_model_repos_info:
-            model_card_data = get_model_card_data_from_cached_repo_info(cached_repo_info)
+            try:
+                print(f"Checking: {cached_repo_info.repo_id}")
+                model_card_data = get_model_card_data_from_cached_repo_info(cached_repo_info)
+            except Exception as e:
+                logger.error(f"Failed to get model card data for model '{cached_repo_info.repo_id}': {e}")
+                continue
             if model_card_data is None:
                 continue
             if self.hf_model_filter.passes_filter(cached_repo_info.repo_id, model_card_data):
-                yield Model(
-                    id=cached_repo_info.repo_id,
-                    created=int(cached_repo_info.last_modified),
-                    owned_by=cached_repo_info.repo_id.split("/")[0],
-                    language=extract_language_list(model_card_data),
-                    task=TASK_NAME_TAG,
-                )
+                model = Model(id=cached_repo_info.repo_id, created=int(cached_repo_info.last_modified), owned_by=cached_repo_info.repo_id.split("/")[0],
+                              language=extract_language_list(model_card_data), task=TASK_NAME_TAG, )
+                yield model
 
     def get_model_files(self, model_id: str) -> WhisperModelFiles:
         model_files = list(list_model_files(model_id))

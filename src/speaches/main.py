@@ -203,3 +203,10 @@ def create_app() -> FastAPI:
         # If host or port is missing, do not print a possibly incorrect URL.
 
     return app
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    config = get_config()
+    uvicorn.run(create_app(), host=config.host, port=config.port)

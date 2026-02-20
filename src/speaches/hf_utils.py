@@ -78,7 +78,8 @@ def get_model_card_data_from_cached_repo_info(
     cached_repo_info: huggingface_hub.CachedRepoInfo,
 ) -> huggingface_hub.ModelCardData | None:
     revisions = list(cached_repo_info.revisions)
-    revision = revisions[0] if len(revisions) == 1 else next(rev for rev in revisions if "main" in rev.refs)
+    # revision = revisions[0] if len(revisions) == 1 else next(rev for rev in revisions if "main" in rev.refs)
+    revision = revisions[0] if len(revisions) == 1 else sorted(revisions, key=lambda rev: rev.last_modified)[-1]
     files = list(revision.files)
     readme_cached_file_info = next((f for f in files if f.file_name == "README.md"), None)
     if readme_cached_file_info is None:

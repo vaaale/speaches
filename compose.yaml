@@ -4,12 +4,12 @@ services:
     build:
       dockerfile: Dockerfile
       context: .
-      platforms:
-        - linux/amd64
-        - linux/arm64
+#      platforms:
+#        - linux/amd64
+#        - linux/arm64
     restart: unless-stopped
     ports:
-      - 8000:8000
+      - 8082:8082
     develop:
       watch:
         - action: rebuild
@@ -20,8 +20,10 @@ services:
     env_file:
       - path: .env
         required: false
+    environment:
+      UVICORN_PORT: 8082
     healthcheck:
-      test: ["CMD", "curl", "--fail", "http://0.0.0.0:8000/health"] # TODO: won't work if a user changes the port
+      test: ["CMD", "curl", "--fail", "http://0.0.0.0:8082/health"]
       interval: 30s
       timeout: 10s
       retries: 3

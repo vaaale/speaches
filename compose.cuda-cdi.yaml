@@ -9,7 +9,7 @@ services:
       file: compose.cuda.yaml
       service: speaches
     volumes:
-      - hf-hub-cache:/home/ubuntu/.cache/huggingface/hub
+      - ${HOME}/.cache/huggingface/hub:/home/ubuntu/.cache/huggingface/hub
     deploy:
       resources:
         reservations:
